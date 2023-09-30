@@ -1,4 +1,4 @@
-# aks-secrets-sync-kv-beta
+# k8s-secrets-sync-kv-beta
 Sync k8s secret with Azure Key Vault
 
 # Setup
