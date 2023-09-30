@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-secrets-store-inline
+  namespace: azure-kv-sync
+  annotations:
+    secret.reloader.stakater.com/reload: "csi-sample-secret,eso-sample-secret"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+        - name: busybox
+          image: registry.k8s.io/e2e-test-images/busybox:1.29-1 
+          command:
+            - "/bin/sleep"
+            - "10000"
+          volumeMounts:
+            - name: secrets-store01-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+          env:
+          - name: SECRET_CSI
+            valueFrom:
+              secretKeyRef:
+                name: csi-sample-secret
+                key: sample-secret
+          - name: SECRET_ESO
+            valueFrom:
+              secretKeyRef:
+                name: eso-sample-secret
+                key: sample-secret
+      volumes:
+        - name: secrets-store01-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "microk8s-azure-kv-sync"
+            nodePublishSecretRef:
+              name: secrets-store-creds

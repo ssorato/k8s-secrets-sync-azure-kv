@@ -1,0 +1,6 @@
+name: pulumi-az-sp
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Testing Azure Key Vault sync with External Secrets Operator and Reloader
